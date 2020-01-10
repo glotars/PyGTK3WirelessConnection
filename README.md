@@ -31,7 +31,7 @@ python3 main.py
 
 Then you will see something like this:
 
-![](https://github.com/Senyaaa/PyGTK3WirelessConnection/blob/master/misc/screen.png?raw=true "PyGTK3 Wireless Connection")
+![](misc/screen.png?raw=true "PyGTK3 Wireless Connection")
 
 ### Settings
 
