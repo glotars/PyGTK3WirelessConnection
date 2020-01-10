@@ -5,13 +5,7 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk, GLib
 
-APP_NAME = "Wireless Connection"
 
-APPLICATION_START_X_COORDINATE = 30
-APPLICATION_START_Y_COORDINATE = 600
-
-APPLICATION_X_SIZE = 220
-APPLICATION_Y_SIZE = 300
 
 def close_when_minimized(window, event):
     if event.new_window_state == Gdk.WindowState.ICONIFIED:
@@ -51,9 +45,17 @@ class EnterPasswordDialog(Gtk.Dialog):
     def show_password(self, button):
         self.entry.set_visibility(button.get_active())
 
+
 class MainWindow(Gtk.Window):
 
-    def __init__(self):
+    def __init__(
+                self, 
+                APP_NAME,
+                APPLICATION_START_X_COORDINATE,
+                APPLICATION_START_Y_COORDINATE,
+                APPLICATION_X_SIZE,
+                APPLICATION_Y_SIZE
+                ):
         Gtk.Window.__init__(self)
         self.set_default_size(APPLICATION_X_SIZE, APPLICATION_Y_SIZE)
         self.set_resizable(False)
@@ -109,6 +111,8 @@ class MainWindow(Gtk.Window):
         self.updating_thread.daemon = True
         self.updating_thread.start()
 
+        Gtk.main()
+
     def update_headerbar_subtitle(self):
         connected_ssid = self.nm.wifi_update_current_connection_status()
         if connected_ssid is not None:
@@ -154,11 +158,3 @@ class MainWindow(Gtk.Window):
             self.nm.wifi_module_disable()
             self.update_wifi_spinner.stop()
             self.update_headerbar_subtitle()
-
-
-def main():
-    MainWindow()
-    Gtk.main()
-
-if __name__ == '__main__':
-    main()
