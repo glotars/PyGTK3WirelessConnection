@@ -3,7 +3,9 @@ import threading
 import time
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, Gio, Gdk, GLib
+from gi.repository import Gtk, Gdk, GLib
+
+APP_NAME = "Wireless Connection"
 
 APPLICATION_START_X_COORDINATE = 30
 APPLICATION_START_Y_COORDINATE = 600
@@ -57,24 +59,24 @@ class MainWindow(Gtk.Window):
         self.set_resizable(False)
         self.move(APPLICATION_START_X_COORDINATE, APPLICATION_START_Y_COORDINATE)
 
-        self.nm = Pynmcli()
+        self.nm = Pynmcli(APP_NAME)
 
         """
         Header Bar
         """
 
-        HeaderBar = Gtk.HeaderBar()
-        HeaderBar.set_show_close_button(False)
-        HeaderBar.props.title = "Connect"
-        self.set_titlebar(HeaderBar)
+        self.HeaderBar = Gtk.HeaderBar()
+        self.HeaderBar.set_show_close_button(False)
+        self.HeaderBar.props.title = APP_NAME
+        self.set_titlebar(self.HeaderBar)
 
         self.update_wifi_spinner = Gtk.Spinner()
-        HeaderBar.pack_end(self.update_wifi_spinner)
+        self.HeaderBar.pack_end(self.update_wifi_spinner)
 
         self.switch = Gtk.Switch()
         self.switch.connect("notify::active", self.wifi_module_status)
         self.switch.set_active(self.nm.wifi_module_status())
-        HeaderBar.pack_start(self.switch)
+        self.HeaderBar.pack_start(self.switch)
 
         """
         Wifi liststore
@@ -103,14 +105,22 @@ class MainWindow(Gtk.Window):
         Updating wifi in another thread
         """
 
-        updating_thread = threading.Thread(target = self.updating_network_list)
-        updating_thread.daemon = True
-        updating_thread.start()
+        self.updating_thread = threading.Thread(target = self.updating_network_list)
+        self.updating_thread.daemon = True
+        self.updating_thread.start()
+
+    def update_headerbar_subtitle(self):
+        connected_ssid = self.nm.wifi_update_current_connection_status()
+        if connected_ssid is not None:
+            self.HeaderBar.set_subtitle(f"Connected to {connected_ssid}")
+        else:
+            self.HeaderBar.set_subtitle("Not connected")
 
     def updating_network_list(self):
         while True:
             GLib.timeout_add_seconds(1, self.getting_data_and_updating_liststore)
             time.sleep(30)
+            self.update_headerbar_subtitle()
 
     def getting_data_and_updating_liststore(self):
         data = self.nm.wifi_available_networks_list()
@@ -130,17 +140,21 @@ class MainWindow(Gtk.Window):
         if response == Gtk.ResponseType.OK:
             self.nm.wifi_current_connection_down()
             self.nm.wifi_establish_new_connection(dialog.wifi_ssid, dialog.entry.get_text())
+            self.update_headerbar_subtitle()
 
         dialog.destroy()
 
     def wifi_module_status(self, *args):
-        if self.switch.get_active() == True:
+        if self.switch.get_active():
             self.nm.wifi_module_enable()
             self.update_wifi_spinner.start()
+            self.update_headerbar_subtitle()
 
         else:
             self.nm.wifi_module_disable()
             self.update_wifi_spinner.stop()
+            self.update_headerbar_subtitle()
+
 
 def main():
     MainWindow()
