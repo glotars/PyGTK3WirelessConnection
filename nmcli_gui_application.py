@@ -63,10 +63,6 @@ class MainWindow(Gtk.Window):
 
         self.nm = Pynmcli(APP_NAME)
 
-        """
-        Header Bar
-        """
-
         self.HeaderBar = Gtk.HeaderBar()
         self.HeaderBar.set_show_close_button(False)
         self.HeaderBar.props.title = APP_NAME
@@ -80,32 +76,20 @@ class MainWindow(Gtk.Window):
         self.switch.set_active(self.nm.wifi_module_status())
         self.HeaderBar.pack_start(self.switch)
 
-        """
-        Wifi liststore
-        """
-
         self.liststore_wifi = Gtk.ListStore(str, str, str)
         self.treeview = Gtk.TreeView(model = self.liststore_wifi)
-
         self.wifi_text = Gtk.CellRendererText()
-        self.ssid_column = Gtk.TreeViewColumn("SSID", self.wifi_text, text=0)
+        self.ssid_column = Gtk.TreeViewColumn("SSID", self.wifi_text, text = 0)
         self.treeview.append_column(self.ssid_column)
-
-        self.signal_column = Gtk.TreeViewColumn("Signal", self.wifi_text, text=1)
+        self.signal_column = Gtk.TreeViewColumn("Signal", self.wifi_text, text = 1)
         self.treeview.append_column(self.signal_column)
-
-        self.security_column = Gtk.TreeViewColumn("Security", self.wifi_text, text=2)
+        self.security_column = Gtk.TreeViewColumn("Security", self.wifi_text, text = 2)
         self.treeview.append_column(self.security_column)
-
         self.treeview.connect("row-activated", self.wifi_connect)
         self.add(self.treeview)
 
         self.connect("window-state-event", close_when_minimized)
         self.show_all()
-
-        """
-        Updating wifi in another thread
-        """
 
         self.updating_thread = threading.Thread(target = self.updating_network_list)
         self.updating_thread.daemon = True
@@ -129,10 +113,8 @@ class MainWindow(Gtk.Window):
     def getting_data_and_updating_liststore(self):
         data = self.nm.wifi_available_networks_list()
         self.liststore_wifi.clear()
-        
         if len(data) == 0:
             return False
-        
         for network_index, d in enumerate(data):
             self.liststore_wifi.append(d)
         return False
@@ -140,21 +122,17 @@ class MainWindow(Gtk.Window):
     def wifi_connect(self, *args):
         dialog = EnterPasswordDialog(self, self.liststore_wifi[args[1][0]][0])
         response = dialog.run()
-
         if response == Gtk.ResponseType.OK:
             self.nm.wifi_current_connection_down()
             self.nm.wifi_establish_new_connection(dialog.wifi_ssid, dialog.entry.get_text())
             self.update_headerbar_subtitle()
-
         dialog.destroy()
 
     def wifi_module_status(self, *args):
         if self.switch.get_active():
             self.nm.wifi_module_enable()
             self.update_wifi_spinner.start()
-            self.update_headerbar_subtitle()
-
         else:
             self.nm.wifi_module_disable()
             self.update_wifi_spinner.stop()
-            self.update_headerbar_subtitle()
+        self.update_headerbar_subtitle()
