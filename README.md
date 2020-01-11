@@ -31,7 +31,7 @@ python3 main.py
 
 Then you will see something like this:
 
-![](misc/screen.png?raw=true "PyGTK3 Wireless Connection")
+![](misc/screenshot.png?raw=true "PyGTK3 Wireless Connection")
 
 ### Settings
 
