@@ -51,10 +51,10 @@ class MainWindow(Gtk.Window):
     def __init__(
                 self, 
                 APP_NAME,
-                APPLICATION_START_X_COORDINATE,
-                APPLICATION_START_Y_COORDINATE,
                 APPLICATION_X_SIZE,
-                APPLICATION_Y_SIZE
+                APPLICATION_Y_SIZE,
+                APPLICATION_START_X_COORDINATE,
+                APPLICATION_START_Y_COORDINATE
                 ):
         Gtk.Window.__init__(self)
         self.set_default_size(APPLICATION_X_SIZE, APPLICATION_Y_SIZE)

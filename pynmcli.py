@@ -28,10 +28,10 @@ class Pynmcli:
     def wifi_update_current_connection_status(self):
         result = self.run_cmd(DEVICE)[1]
         result = re.split(r'\s{2,}', result.split("\n")[1])
-        result = result[-2]
-        if result != "--":
-            return result
-        else:
+        try:
+            ssid_index = result.index("connected") + 1
+            return result[ssid_index]
+        except:
             return None
 
     def wifi_module_status(self):
