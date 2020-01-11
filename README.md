@@ -58,9 +58,9 @@ python3 pygtk3-wireless-connection.py 220 300 20 600
 
 The application will be opened:
 
-![](https://github.com/Senyaaa/PyGTK3WirelessConnection/blob/master/misc/screen.png?raw=true "PyGTK3 Wireless Connection")
+![](misc/screenshot.png?raw=true "PyGTK3 Wireless Connection")
 
 
 ## License
 
-This project is licensed under the GNU General Public License v3.0 ‒ see the [LICENSE](https://github.com/Senyaaa/PyGTK3WirelessConnection/blob/master/LICENSE) file for details.
+This project is licensed under the GNU General Public License v3.0 ‒ see the [LICENSE](LICENSE) file for details.
